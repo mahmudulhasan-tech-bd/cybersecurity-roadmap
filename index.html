@@ -6,76 +6,145 @@
   <title>60 Days Cybersecurity Roadmap</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f4f6f8; color: #333; text-align: center; }
+    body { background-color: #0f172a; color: #f8fafc; text-align: center; padding-bottom: 50px; }
     
     header {
       background-color: #1e293b;
-      color: #fff;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      color: #38bdf8;
+      padding: 20px;
+      border-bottom: 2px solid #334155;
     }
-    header h2 { font-size: 20px; }
-    
-    .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-    .subtitle { font-size: 18px; color: #475569; margin-bottom: 20px; }
-    
-    .progress-info { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+    header h1 { font-size: 24px; margin-bottom: 5px; }
+
+    .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+
+    /* Date Picker Section */
+    .date-section {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .date-section label { font-size: 16px; color: #cbd5e1; }
+    .date-section input {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #475569;
+      background-color: #0f172a;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    /* Progress Bar */
+    .progress-info { font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #38bdf8; }
     .progress-bar-bg {
       width: 100%;
-      background-color: #e2e8f0;
+      background-color: #334155;
       border-radius: 20px;
-      height: 20px;
+      height: 22px;
       overflow: hidden;
-      margin-bottom: 30px;
+      margin-bottom: 35px;
     }
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #ef4444, #dc2626);
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+      transition: width 0.4s ease;
     }
 
+    /* Grid Layout */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 15px;
     }
 
     .day-card {
-      background-color: #fff;
-      border: 2px solid #ef4444;
-      color: #ef4444;
+      background-color: #1e293b;
+      border: 2px solid #38bdf8;
+      color: #38bdf8;
       padding: 15px 10px;
       border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
       user-select: none;
       transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .day-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
     }
 
     .day-card.completed {
-      background-color: #ef4444;
-      color: white;
+      background-color: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
     }
+
+    .checkmark { font-size: 18px; display: none; }
+    .day-card.completed .checkmark { display: inline; }
+
+    /* Modal / Pop-up Window */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      text-align: left;
+      border: 1px solid #38bdf8;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .modal-content h3 { color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+    .modal-content ul { list-style-type: square; padding-left: 20px; margin-bottom: 20px; color: #e2e8f0; line-height: 1.6; }
+    .modal-btn-group { display: flex; justify-content: space-between; gap: 10px; }
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-toggle { background-color: #0284c7; color: white; }
+    .btn-close { background-color: #475569; color: white; }
   </style>
 </head>
 <body>
 
   <header>
-    <h2>60 Days Cybersecurity Roadmap</h2>
-    <div>My Security Hub</div>
+    <h1>🛡️ 60 Days Cybersecurity Roadmap</h1>
+    <p>Beginner → Networking → Linux → Web Security → Pentesting → CTF</p>
   </header>
 
   <div class="container">
-    <p class="subtitle">Hi Learner, Best of luck! Focus on continuous learning.</p>
     
+    <!-- Start Date Section -->
+    <div class="date-section">
+      <label for="start-date">📅 শুরু করার তারিখ নির্বাচন করুন:</label>
+      <input type="date" id="start-date">
+    </div>
+
+    <!-- Progress Bar -->
     <div class="progress-info">
       সর্বমোট সম্পন্ন হয়েছে: <span id="completed-count">0</span>/60 দিন
     </div>
@@ -84,17 +153,109 @@
       <div class="progress-bar-fill" id="progress-fill"></div>
     </div>
 
+    <!-- Days Grid -->
     <div class="grid" id="days-container"></div>
   </div>
 
+  <!-- Modal Task Details -->
+  <div class="modal" id="task-modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Day Title</h3>
+      <ul id="modal-tasks"></ul>
+      <div class="modal-btn-group">
+        <button class="btn btn-toggle" id="modal-toggle-btn">Mark as Complete</button>
+        <button class="btn btn-close" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Detailed tasks array for 60 days
+    const roadmapData = {
+      1: { title: "Day 1 — Cybersecurity Intro", tasks: ["Cybersecurity কী এবং কেন দরকার শিখো", "CIA Triad শিখো", "Threat, Vulnerability, Risk-এর পার্থক্য শিখো", "Malware-এর basic types শিখো", "10টি cybersecurity term খাতায় লিখো"] },
+      2: { title: "Day 2 — Computer Fundamentals", tasks: ["CPU কীভাবে কাজ করে", "RAM বনাম Storage", "Process কী", "Program বনাম Process", "Kernel কী"] },
+      3: { title: "Day 3 — Operating System", tasks: ["Operating System কী", "Windows-এর basic architecture", "Linux-এর basic architecture", "Kernel বনাম Shell", "User বনাম Administrator/Root"] },
+      4: { title: "Day 4 — Linux Installation", tasks: ["Virtual Machine কী শিখো", "VirtualBox/VMware সম্পর্কে জানো", "Ubuntu ও Kali Linux সম্পর্কে জানো", "একটি Linux VM setup করো", "Terminal খুলে basic commands চালাও"] },
+      5: { title: "Day 5 — Linux Commands", tasks: ["pwd", "ls", "cd", "mkdir", "touch"] },
+      6: { title: "Day 6 — Linux File Management", tasks: ["cp", "mv", "rm", "cat", "less"] },
+      7: { title: "Day 7 — Linux Permissions", tasks: ["chmod", "chown", "Read/Write/Execute permission", "rwx বুঝো", "ls -l দিয়ে permission দেখো"] },
+      8: { title: "Day 8 — Networking Basics", tasks: ["Network কী", "LAN বনাম WAN", "Client বনাম Server", "Router কী", "Switch কী"] },
+      9: { title: "Day 9 — IP Address", tasks: ["IPv4 কী", "IPv6 কী", "Private IP", "Public IP", "নিজের VM-এর IP বের করো"] },
+      10: { title: "Day 10 — MAC & ARP", tasks: ["MAC Address কী", "ARP কী", "ARP Table কী (arp / ip neigh)", "IP → MAC relationship বুঝো"] },
+      11: { title: "Day 11 — Ports", tasks: ["Port কী", "TCP Port", "UDP Port", "Common ports মুখস্থ করো", "netstat / ss ব্যবহার করো"] },
+      12: { title: "Day 12 — TCP", tasks: ["TCP কী", "TCP 3-way handshake", "SYN", "SYN-ACK", "ACK"] },
+      13: { title: "Day 13 — UDP", tasks: ["UDP কী", "TCP বনাম UDP", "UDP কোথায় ব্যবহৃত হয়", "DNS কেন UDP ব্যবহার করে বুঝো", "TCP/UDP comparison table বানাও"] },
+      14: { title: "Day 14 — OSI Model Part 1", tasks: ["Physical Layer", "Data Link Layer", "Network Layer", "Transport Layer"] },
+      15: { title: "Day 15 — OSI Model Part 2", tasks: ["Session Layer", "Presentation Layer", "Application Layer", "প্রতিটি layer-এর example লিখো", "OSI Model মুখস্থ করার চেষ্টা করো"] },
+      16: { title: "Day 16 — TCP/IP Model", tasks: ["TCP/IP Model শিখো", "OSI বনাম TCP/IP", "HTTP কোন layer-এ", "TCP কোন layer-এ", "IP কোন layer-এ"] },
+      17: { title: "Day 17 — DNS", tasks: ["DNS কী", "Domain Name কী", "DNS Resolver", "A Record", "nslookup / dig ব্যবহার করো"] },
+      18: { title: "Day 18 — DHCP & NAT", tasks: ["DHCP কী & DHCP process", "NAT কী & Private → Public IP", "Home router-এ NAT-এর ভূমিকা বুঝো"] },
+      19: { title: "Day 19 — HTTP", tasks: ["HTTP কী", "Request & Response", "GET & POST"] },
+      20: { title: "Day 20 — HTTPS", tasks: ["HTTPS কী", "TLS & Encryption কী", "Certificate কী", "HTTP বনাম HTTPS"] },
+      21: { title: "Day 21 — Linux Users", tasks: ["Linux Users & Groups", "Root User", "sudo & whoami"] },
+      22: { title: "Day 22 — Processes", tasks: ["Process কী", "ps, top, kill", "Process ID/PID"] },
+      23: { title: "Day 23 — Services", tasks: ["Service কী & systemctl", "Running services দেখো", "Service start/stop বুঝো", "VM-এর services inspect করো"] },
+      24: { title: "Day 24 — Linux Logs", tasks: ["Logs কী (/var/log)", "Authentication logs", "journalctl", "একটি log file পড়ো"] },
+      25: { title: "Day 25 — SSH", tasks: ["SSH কী & Port", "SSH Authentication", "Password Auth & Key Concept"] },
+      26: { title: "Day 26 — Bash Basics", tasks: ["Bash কী", "Variables & echo", "Pipe | & Redirection >"] },
+      27: { title: "Day 27 — Bash Scripting", tasks: ["if, for, while", "Command substitution", "একটি ছোট Bash script লেখো"] },
+      28: { title: "Day 28 — Linux Networking Cmds", tasks: ["ip, ping, traceroute, curl", "Network info inspect করো"] },
+      29: { title: "Day 29 — AAA", tasks: ["Authentication, Authorization, Accounting", "Authentication বনাম Authorization", "বাস্তব example লিখো"] },
+      30: { title: "Day 30 — Encryption & Hashing", tasks: ["Encryption, Hashing, Encoding", "Encryption vs Hashing", "Encoding vs Encryption"] },
+      31: { title: "Day 31 — Cryptography", tasks: ["Symmetric & Asymmetric Encryption", "AES & RSA", "Public Key / Private Key"] },
+      32: { title: "Day 32 — Hashing Details", tasks: ["Hash কী (MD5, SHA-256)", "Password Hashing", "Salt কী"] },
+      33: { title: "Day 33 — Firewall", tasks: ["Firewall কী", "Inbound & Outbound Traffic", "Firewall Rules & Linux Firewall"] },
+      34: { title: "Day 34 — IDS / IPS / SIEM", tasks: ["IDS, IPS, SIEM, SOC", "IDS বনাম IPS"] },
+      35: { title: "Day 35 — Common Attacks", tasks: ["Phishing & Social Engineering", "Brute Force & Credential Stuffing", "Account Security Best Practices"] },
+      36: { title: "Day 36 — How Websites Work", tasks: ["Browser, Web Server, Database", "Client-Server Architecture"] },
+      37: { title: "Day 37 — HTML Basics", tasks: ["HTML basics, Forms, Input Fields", "GET Parameters & POST Data"] },
+      38: { title: "Day 38 — Cookies & Sessions", tasks: ["Cookies & Sessions", "Session ID & Auth Cookies", "Cookie Security"] },
+      39: { title: "Day 39 — SQL Revision", tasks: ["SELECT, WHERE, INSERT, UPDATE", "Database query practice"] },
+      40: { title: "Day 40 — SQL Injection", tasks: ["SQLi কী ও কেন হয়", "Parameterized Query & Prepared Statement", "SQLi Prevention"] },
+      41: { title: "Day 41 — XSS", tasks: ["Reflected, Stored, DOM XSS", "XSS Prevention"] },
+      42: { title: "Day 42 — CSRF & CORS", tasks: ["CSRF & CORS কী", "Same-Origin Policy & CSRF Token", "Security Headers"] },
+      43: { title: "Day 43 — Auth Security", tasks: ["Weak Passwords & Broken Auth", "Session Management & MFA"] },
+      44: { title: "Day 44 — Access Control", tasks: ["IDOR & Privilege Escalation", "Vertical & Horizontal Escalation"] },
+      45: { title: "Day 45 — OWASP Top 10", tasks: ["Injection & Broken Access Control", "Security Misconfiguration", "Identification & Auth Failures"] },
+      46: { title: "Day 46 — Ethical Hacking", tasks: ["Ethical Hacking vs Pentesting", "Reconnaissance & Scanning", "Exploitation vs Vulnerability"] },
+      47: { title: "Day 47 — Reconnaissance", tasks: ["Passive & Active Reconnaissance", "WHOIS & DNS Enumeration", "Public Information Gathering"] },
+      48: { title: "Day 48 — Nmap", tasks: ["Nmap কী", "Host Discovery & Port Scanning", "Service Detection", "Lab Machine-এ Nmap practice"] },
+      49: { title: "Day 49 — Port Scan Analysis", tasks: ["Open, Closed, Filtered Ports", "Service/Version analysis"] },
+      50: { title: "Day 50 — Wireshark", tasks: ["Wireshark কী & Traffic Capture", "TCP & DNS Packet inspect করো"] },
+      51: { title: "Day 51 — Burp Suite", tasks: ["Burp Suite Proxy & Intercept", "HTTP Request/Response Inspect"] },
+      52: { title: "Day 52 — Web Enumeration", tasks: ["Directory Enumeration & robots.txt", "Web Server Fingerprinting"] },
+      53: { title: "Day 53 — Vulnerability Assessment", tasks: ["Vulnerability Scanner (CVE, CVSS)", "False Positive vs False Negative"] },
+      54: { title: "Day 54 — Exploitation Concepts", tasks: ["Exploit, Payload, Shell", "Reverse Shell concept & Ethics"] },
+      55: { title: "Day 55 — CTF Intro", tasks: ["CTF & Flag কী", "Web & Linux Challenges overview"] },
+      56: { title: "Day 56 — Beginner CTF", tasks: ["Beginner CTF শুরু করো", "Recon, Open Ports & Web inspect", "প্রথম Flag উদ্ধার করো"] },
+      57: { title: "Day 57 — Linux Lab", tasks: ["User Enumeration", "File Permissions inspect", "Misconfiguration ও Flag capture"] },
+      58: { title: "Day 58 — Web Security Lab", tasks: ["HTTP Request & Parameters inspect", "Vulnerability বুঝে Flag capture"] },
+      59: { title: "Day 59 — Mini Pentest", tasks: ["Recon, Nmap, Enumeration", "Vulnerability ID & Report তৈরি"] },
+      60: { title: "Day 60 — FINAL PROJECT 🔥", tasks: ["Target Lab Description", "Open Ports & Vulnerabilities", "Risk Level & Recommendations Report"] }
+    };
+
     const totalDays = 60;
     const daysContainer = document.getElementById('days-container');
     const completedCountEl = document.getElementById('completed-count');
     const progressFill = document.getElementById('progress-fill');
+    const startDateInput = document.getElementById('start-date');
 
-    // Load saved progress from local storage
+    const modal = document.getElementById('task-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalTasks = document.getElementById('modal-tasks');
+    const modalToggleBtn = document.getElementById('modal-toggle-btn');
+
+    let currentSelectedDay = null;
+
+    // Load LocalStorage Data
     let completedDays = JSON.parse(localStorage.getItem('cyber_roadmap_progress')) || [];
+    let savedStartDate = localStorage.getItem('cyber_start_date') || '';
+
+    if (savedStartDate) startDateInput.value = savedStartDate;
+
+    startDateInput.addEventListener('change', (e) => {
+      localStorage.setItem('cyber_start_date', e.target.value);
+    });
 
     function updateProgress() {
       const count = completedDays.length;
@@ -104,30 +265,68 @@
       localStorage.setItem('cyber_roadmap_progress', JSON.stringify(completedDays));
     }
 
-    // Generate Day 1 to 60 buttons
-    for (let i = 1; i <= totalDays; i++) {
-      const card = document.createElement('div');
-      card.classList.add('day-card');
-      if (completedDays.includes(i)) {
-        card.classList.add('completed');
+    function renderCards() {
+      daysContainer.innerHTML = '';
+      for (let i = 1; i <= totalDays; i++) {
+        const card = document.createElement('div');
+        card.classList.add('day-card');
+        if (completedDays.includes(i)) card.classList.add('completed');
+
+        card.innerHTML = `
+          <span>Day ${i}</span>
+          <span class="checkmark">✓</span>
+        `;
+
+        card.addEventListener('click', () => openModal(i));
+        daysContainer.appendChild(card);
       }
-      card.textContent = `Day ${i}`;
-
-      card.addEventListener('click', () => {
-        if (completedDays.includes(i)) {
-          completedDays = completedDays.filter(day => day !== i);
-          card.classList.remove('completed');
-        } else {
-          completedDays.push(i);
-          card.classList.add('completed');
-        }
-        updateProgress();
-      });
-
-      daysContainer.appendChild(card);
     }
 
-    // Initialize progress bar
+    function openModal(day) {
+      currentSelectedDay = day;
+      const data = roadmapData[day] || { title: `Day ${day}`, tasks: ["কোনো বিস্তারিত টপিক নেই।"] };
+      
+      modalTitle.textContent = data.title;
+      modalTasks.innerHTML = '';
+      data.tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.textContent = task;
+        modalTasks.appendChild(li);
+      });
+
+      if (completedDays.includes(day)) {
+        modalToggleBtn.textContent = "Unmark / অসম্পূর্ণ হিসেবে চিহ্নিত করুন";
+        modalToggleBtn.style.backgroundColor = "#ef4444";
+      } else {
+        modalToggleBtn.textContent = "Mark as Completed / সম্পন্ন হয়েছে";
+        modalToggleBtn.style.backgroundColor = "#0284c7";
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+
+    modalToggleBtn.addEventListener('click', () => {
+      if (completedDays.includes(currentSelectedDay)) {
+        completedDays = completedDays.filter(d => d !== currentSelectedDay);
+      } else {
+        completedDays.push(currentSelectedDay);
+      }
+      updateProgress();
+      renderCards();
+      closeModal();
+    });
+
+    // Close modal on outside click
+    window.onclick = function(event) {
+      if (event.target == modal) closeModal();
+    }
+
+    // Initialize
+    renderCards();
     updateProgress();
   </script>
 </body>
