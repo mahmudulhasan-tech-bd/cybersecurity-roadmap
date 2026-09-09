@@ -18,7 +18,7 @@
 
     .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
 
-    /* Date Picker Section */
+    /* Date Section */
     .date-section {
       background: #1e293b;
       padding: 15px;
@@ -68,7 +68,7 @@
       background-color: #1e293b;
       border: 2px solid #38bdf8;
       color: #38bdf8;
-      padding: 15px 10px;
+      padding: 12px 8px;
       border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
@@ -78,7 +78,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 4px;
     }
 
     .day-card:hover {
@@ -92,8 +92,10 @@
       color: #ffffff;
     }
 
-    .checkmark { font-size: 18px; display: none; }
-    .day-card.completed .checkmark { display: inline; }
+    .card-date { font-size: 11px; color: #38bdf8; margin-top: 2px; }
+    .day-card.completed .card-date { color: #e2e8f0; }
+    .task-status { font-size: 11px; font-weight: normal; color: #94a3b8; }
+    .day-card.completed .task-status { color: #e2e8f0; }
 
     /* Modal / Pop-up Window */
     .modal {
@@ -109,24 +111,47 @@
       background: #1e293b;
       padding: 25px;
       border-radius: 12px;
-      max-width: 500px;
+      max-width: 550px;
       width: 90%;
       text-align: left;
       border: 1px solid #38bdf8;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
-    .modal-content h3 { color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
-    .modal-content ul { list-style-type: square; padding-left: 20px; margin-bottom: 20px; color: #e2e8f0; line-height: 1.6; }
-    .modal-btn-group { display: flex; justify-content: space-between; gap: 10px; }
+    .modal-content h3 { color: #38bdf8; margin-bottom: 5px; }
+    .modal-target-date { font-size: 13px; color: #cbd5e1; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+    
+    /* Checklist style */
+    .checklist { list-style: none; padding: 0; margin-bottom: 20px; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #334155;
+      color: #e2e8f0;
+    }
+    .checklist input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      cursor: pointer;
+      accent-color: #38bdf8;
+    }
+
+    .task-label-box { display: flex; flex-direction: column; }
+    .task-title { font-size: 15px; }
+    .task-time-stamp { font-size: 11px; color: #4ade80; margin-top: 3px; }
+
+    .modal-btn-group { display: flex; justify-content: flex-end; }
     .btn {
-      padding: 10px 15px;
+      padding: 10px 20px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      background-color: #38bdf8;
+      color: #0f172a;
     }
-    .btn-toggle { background-color: #0284c7; color: white; }
-    .btn-close { background-color: #475569; color: white; }
   </style>
 </head>
 <body>
@@ -140,7 +165,7 @@
     
     <!-- Start Date Section -->
     <div class="date-section">
-      <label for="start-date">📅 শুরু করার তারিখ নির্বাচন করুন:</label>
+      <label for="start-date">📅 শুরু করার তারিখ:</label>
       <input type="date" id="start-date">
     </div>
 
@@ -161,16 +186,15 @@
   <div class="modal" id="task-modal">
     <div class="modal-content">
       <h3 id="modal-title">Day Title</h3>
-      <ul id="modal-tasks"></ul>
+      <div class="modal-target-date" id="modal-target-date">📅 নির্ধারিত তারিখ: --</div>
+      <ul class="checklist" id="modal-tasks"></ul>
       <div class="modal-btn-group">
-        <button class="btn btn-toggle" id="modal-toggle-btn">Mark as Complete</button>
-        <button class="btn btn-close" onclick="closeModal()">Close</button>
+        <button class="btn" onclick="closeModal()">Close</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Detailed tasks array for 60 days
     const roadmapData = {
       1: { title: "Day 1 — Cybersecurity Intro", tasks: ["Cybersecurity কী এবং কেন দরকার শিখো", "CIA Triad শিখো", "Threat, Vulnerability, Risk-এর পার্থক্য শিখো", "Malware-এর basic types শিখো", "10টি cybersecurity term খাতায় লিখো"] },
       2: { title: "Day 2 — Computer Fundamentals", tasks: ["CPU কীভাবে কাজ করে", "RAM বনাম Storage", "Process কী", "Program বনাম Process", "Kernel কী"] },
@@ -242,27 +266,52 @@
 
     const modal = document.getElementById('task-modal');
     const modalTitle = document.getElementById('modal-title');
+    const modalTargetDate = document.getElementById('modal-target-date');
     const modalTasks = document.getElementById('modal-tasks');
-    const modalToggleBtn = document.getElementById('modal-toggle-btn');
-
-    let currentSelectedDay = null;
 
     // Load LocalStorage Data
-    let completedDays = JSON.parse(localStorage.getItem('cyber_roadmap_progress')) || [];
+    let completedTasks = JSON.parse(localStorage.getItem('cyber_tasks_completed_v2')) || {};
     let savedStartDate = localStorage.getItem('cyber_start_date') || '';
 
     if (savedStartDate) startDateInput.value = savedStartDate;
 
     startDateInput.addEventListener('change', (e) => {
       localStorage.setItem('cyber_start_date', e.target.value);
+      renderCards();
     });
 
+    // Date Calculation Function
+    function getCalculatedDate(dayNumber) {
+      const baseDateStr = startDateInput.value;
+      if (!baseDateStr) return null;
+
+      const date = new Date(baseDateStr);
+      date.setDate(date.getDate() + (dayNumber - 1));
+      
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      
+      return `${day}/${month}/${year}`;
+    }
+
+    function isDayComplete(day) {
+      const total = roadmapData[day]?.tasks.length || 0;
+      const done = completedTasks[day] ? Object.keys(completedTasks[day]).length : 0;
+      return total > 0 && total === done;
+    }
+
     function updateProgress() {
-      const count = completedDays.length;
-      completedCountEl.textContent = count;
-      const percentage = (count / totalDays) * 100;
+      let completedDaysCount = 0;
+      for (let i = 1; i <= totalDays; i++) {
+        if (isDayComplete(i)) completedDaysCount++;
+      }
+
+      completedCountEl.textContent = completedDaysCount;
+      const percentage = (completedDaysCount / totalDays) * 100;
       progressFill.style.width = percentage + '%';
-      localStorage.setItem('cyber_roadmap_progress', JSON.stringify(completedDays));
+      
+      localStorage.setItem('cyber_tasks_completed_v2', JSON.stringify(completedTasks));
     }
 
     function renderCards() {
@@ -270,11 +319,19 @@
       for (let i = 1; i <= totalDays; i++) {
         const card = document.createElement('div');
         card.classList.add('day-card');
-        if (completedDays.includes(i)) card.classList.add('completed');
+
+        const total = roadmapData[i]?.tasks.length || 0;
+        const done = completedTasks[i] ? Object.keys(completedTasks[i]).length : 0;
+        const targetDate = getCalculatedDate(i);
+
+        if (isDayComplete(i)) {
+          card.classList.add('completed');
+        }
 
         card.innerHTML = `
           <span>Day ${i}</span>
-          <span class="checkmark">✓</span>
+          ${targetDate ? `<span class="card-date">📅 ${targetDate}</span>` : ''}
+          <span class="task-status">${done}/${total} Done</span>
         `;
 
         card.addEventListener('click', () => openModal(i));
@@ -283,24 +340,68 @@
     }
 
     function openModal(day) {
-      currentSelectedDay = day;
-      const data = roadmapData[day] || { title: `Day ${day}`, tasks: ["কোনো বিস্তারিত টপিক নেই।"] };
-      
+      const data = roadmapData[day] || { title: `Day ${day}`, tasks: [] };
       modalTitle.textContent = data.title;
+      
+      const targetDate = getCalculatedDate(day);
+      modalTargetDate.textContent = targetDate ? `📅 নির্ধারিত তারিখ: ${targetDate}` : '📅 নির্ধারিত তারিখ: (শুরুর তারিখ সিলেক্ট করুন)';
+
       modalTasks.innerHTML = '';
-      data.tasks.forEach(task => {
+
+      if (!completedTasks[day]) completedTasks[day] = {};
+
+      data.tasks.forEach((task, index) => {
         const li = document.createElement('li');
-        li.textContent = task;
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `task-${day}-${index}`;
+        
+        const isChecked = completedTasks[day][index] ? true : false;
+        checkbox.checked = isChecked;
+
+        const labelBox = document.createElement('div');
+        labelBox.classList.add('task-label-box');
+
+        const label = document.createElement('label');
+        label.htmlFor = `task-${day}-${index}`;
+        label.classList.add('task-title');
+        label.textContent = task;
+        label.style.cursor = 'pointer';
+
+        labelBox.appendChild(label);
+
+        if (isChecked && completedTasks[day][index]) {
+          const timeStamp = document.createElement('span');
+          timeStamp.classList.add('task-time-stamp');
+          timeStamp.textContent = `✓ সম্পন্ন: ${completedTasks[day][index]}`;
+          labelBox.appendChild(timeStamp);
+        }
+
+        checkbox.addEventListener('change', (e) => {
+          // Auto Set Start Date on FIRST task check if empty
+          if (!startDateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.value = today;
+            localStorage.setItem('cyber_start_date', today);
+          }
+
+          if (e.target.checked) {
+            const now = new Date();
+            const timeStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} - ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            completedTasks[day][index] = timeStr;
+          } else {
+            delete completedTasks[day][index];
+          }
+
+          updateProgress();
+          renderCards();
+          openModal(day); // Refresh modal view
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(labelBox);
         modalTasks.appendChild(li);
       });
-
-      if (completedDays.includes(day)) {
-        modalToggleBtn.textContent = "Unmark / অসম্পূর্ণ হিসেবে চিহ্নিত করুন";
-        modalToggleBtn.style.backgroundColor = "#ef4444";
-      } else {
-        modalToggleBtn.textContent = "Mark as Completed / সম্পন্ন হয়েছে";
-        modalToggleBtn.style.backgroundColor = "#0284c7";
-      }
 
       modal.style.display = 'flex';
     }
@@ -309,18 +410,6 @@
       modal.style.display = 'none';
     }
 
-    modalToggleBtn.addEventListener('click', () => {
-      if (completedDays.includes(currentSelectedDay)) {
-        completedDays = completedDays.filter(d => d !== currentSelectedDay);
-      } else {
-        completedDays.push(currentSelectedDay);
-      }
-      updateProgress();
-      renderCards();
-      closeModal();
-    });
-
-    // Close modal on outside click
     window.onclick = function(event) {
       if (event.target == modal) closeModal();
     }
