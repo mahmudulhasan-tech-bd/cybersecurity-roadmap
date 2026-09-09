@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>60 Days Cybersecurity Roadmap</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f8; color: #333; text-align: center; }
+    
+    header {
+      background-color: #1e293b;
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h2 { font-size: 20px; }
+    
+    .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+    .subtitle { font-size: 18px; color: #475569; margin-bottom: 20px; }
+    
+    .progress-info { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+    .progress-bar-bg {
+      width: 100%;
+      background-color: #e2e8f0;
+      border-radius: 20px;
+      height: 20px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+      transition: width 0.3s ease;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 15px;
+    }
+
+    .day-card {
+      background-color: #fff;
+      border: 2px solid #ef4444;
+      color: #ef4444;
+      padding: 15px 10px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .day-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .day-card.completed {
+      background-color: #ef4444;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>60 Days Cybersecurity Roadmap</h2>
+    <div>My Security Hub</div>
+  </header>
+
+  <div class="container">
+    <p class="subtitle">Hi Learner, Best of luck! Focus on continuous learning.</p>
+    
+    <div class="progress-info">
+      সর্বমোট সম্পন্ন হয়েছে: <span id="completed-count">0</span>/60 দিন
+    </div>
+    
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="grid" id="days-container"></div>
+  </div>
+
+  <script>
+    const totalDays = 60;
+    const daysContainer = document.getElementById('days-container');
+    const completedCountEl = document.getElementById('completed-count');
+    const progressFill = document.getElementById('progress-fill');
+
+    // Load saved progress from local storage
+    let completedDays = JSON.parse(localStorage.getItem('cyber_roadmap_progress')) || [];
+
+    function updateProgress() {
+      const count = completedDays.length;
+      completedCountEl.textContent = count;
+      const percentage = (count / totalDays) * 100;
+      progressFill.style.width = percentage + '%';
+      localStorage.setItem('cyber_roadmap_progress', JSON.stringify(completedDays));
+    }
+
+    // Generate Day 1 to 60 buttons
+    for (let i = 1; i <= totalDays; i++) {
+      const card = document.createElement('div');
+      card.classList.add('day-card');
+      if (completedDays.includes(i)) {
+        card.classList.add('completed');
+      }
+      card.textContent = `Day ${i}`;
+
+      card.addEventListener('click', () => {
+        if (completedDays.includes(i)) {
+          completedDays = completedDays.filter(day => day !== i);
+          card.classList.remove('completed');
+        } else {
+          completedDays.push(i);
+          card.classList.add('completed');
+        }
+        updateProgress();
+      });
+
+      daysContainer.appendChild(card);
+    }
+
+    // Initialize progress bar
+    updateProgress();
+  </script>
+</body>
+</html>
